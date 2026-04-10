@@ -18,7 +18,6 @@ def display_header():
 def main():
     display_header()
     
-    # 1. Збір вхідних даних
     url = Prompt.ask("\n[bold yellow]1.[/bold yellow] Введіть [green]URL[/green] сайту")
     tag = Prompt.ask("[bold yellow]2.[/bold yellow] Введіть [green]HTML тег[/green] контейнера (напр. div, article, li)")
     css_class = Prompt.ask("[bold yellow]3.[/bold yellow] Введіть [green]CSS клас[/green] контейнера (напр. product_pod)")
@@ -26,7 +25,7 @@ def main():
     scraper = UniversalScraper()
     
     try:
-        # 2. Процес парсингу з анімацією завантаження
+
         with console.status(f"[bold green]Завантаження {url}...", spinner="dots"):
             html = scraper.fetch_html(url)
             
@@ -37,7 +36,6 @@ def main():
             console.print(f"[bold red]❌ За тегом <{tag} class=\"{css_class}\"> нічого не знайдено.[/bold red]")
             return
 
-        # 3. Прев'ю результатів
         console.print(f"\n[bold green]✅ Знайдено елементів: {len(data)}[/bold green]")
         
         table = Table(show_header=True, header_style="bold magenta")
@@ -52,7 +50,6 @@ def main():
         if len(data) > 5:
             console.print(f"[dim]... та ще {len(data) - 5} записів приховано.[/dim]")
 
-        # 4. Логіка експорту
         console.print("\n[bold cyan]=== Налаштування експорту ===[/bold cyan]")
         export_format = Prompt.ask(
             "[bold yellow]4.[/bold yellow] Виберіть формат збереження", 
@@ -65,7 +62,7 @@ def main():
             default="scraped_data"
         )
         
-        # Виклик відповідного методу з exporter.py
+        # Виклик відповідного методу з exporter.p
         if export_format == "csv":
             saved_path = Exporter.to_csv(data, f"{base_filename}.csv")
         else:

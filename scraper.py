@@ -24,10 +24,9 @@ class UniversalScraper:
         
         extracted = []
         for index, item in enumerate(items, 1):
-            # Витягуємо весь текст з блоку, очищаючи від зайвих пробілів
+
             raw_text = " ".join(item.stripped_strings)
             
-            # Шукаємо перше посилання в блоці, якщо воно є
             link_tag = item.find('a')
             link = link_tag.get('href') if link_tag else "Немає посилання"
 

@@ -15,8 +15,6 @@ class Exporter:
         if not data:
             return None
             
-        # Формуємо таблицю
-        # headers="keys" автоматично візьме назви з ключів словника
         table = tabulate(data, headers="keys", tablefmt="grid")
         
         with open(filename, "w", encoding="utf-8") as f:
