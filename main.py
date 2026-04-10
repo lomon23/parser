@@ -9,22 +9,24 @@ console = Console()
 
 def display_header():
     console.print(Panel.fit(
-        "[bold cyan]Universal Web Scraper CLI v1.0[/bold cyan]\n"
-        "[dim]Розроблено для швидкого збору даних з будь-яких HTML-структур[/dim]",
+        "[bold cyan]Universal Web Scraper CLI v1.1[/bold cyan]\n"
+        "[dim]Розроблено для швидкого збору даних з будь-яких HTML-структур\n"
+        "Підтримка експорту: CSV (сирі дані) та TXT (форматовані таблиці)[/dim]",
         border_style="cyan"
     ))
 
 def main():
     display_header()
     
-    # Інтерактивне введення даних
+    # 1. Збір вхідних даних
     url = Prompt.ask("\n[bold yellow]1.[/bold yellow] Введіть [green]URL[/green] сайту")
     tag = Prompt.ask("[bold yellow]2.[/bold yellow] Введіть [green]HTML тег[/green] контейнера (напр. div, article, li)")
-    css_class = Prompt.ask("[bold yellow]3.[/bold yellow] Введіть [green]CSS клас[/green] контейнера (напр. product-card)")
+    css_class = Prompt.ask("[bold yellow]3.[/bold yellow] Введіть [green]CSS клас[/green] контейнера (напр. product_pod)")
     
     scraper = UniversalScraper()
     
     try:
+        # 2. Процес парсингу з анімацією завантаження
         with console.status(f"[bold green]Завантаження {url}...", spinner="dots"):
             html = scraper.fetch_html(url)
             
@@ -35,7 +37,7 @@ def main():
             console.print(f"[bold red]❌ За тегом <{tag} class=\"{css_class}\"> нічого не знайдено.[/bold red]")
             return
 
-        # Малюємо красиву таблицю з результатами в терміналі
+        # 3. Прев'ю результатів
         console.print(f"\n[bold green]✅ Знайдено елементів: {len(data)}[/bold green]")
         
         table = Table(show_header=True, header_style="bold magenta")
@@ -43,7 +45,6 @@ def main():
         table.add_column("Текст блоку", min_width=30)
         table.add_column("Посилання", style="blue")
         
-        # Виводимо перші 5 елементів для прев'ю
         for row in data[:5]:
             table.add_row(str(row["ID"]), row["Зміст"], row["Посилання"])
             
@@ -51,9 +52,24 @@ def main():
         if len(data) > 5:
             console.print(f"[dim]... та ще {len(data) - 5} записів приховано.[/dim]")
 
-        # Експорт
-        save_file = Prompt.ask("\n[bold yellow]4.[/bold yellow] Введіть назву файлу для збереження", default="output.csv")
-        saved_path = Exporter.to_csv(data, save_file)
+        # 4. Логіка експорту
+        console.print("\n[bold cyan]=== Налаштування експорту ===[/bold cyan]")
+        export_format = Prompt.ask(
+            "[bold yellow]4.[/bold yellow] Виберіть формат збереження", 
+            choices=["csv", "txt"], 
+            default="csv"
+        )
+        
+        base_filename = Prompt.ask(
+            "[bold yellow]5.[/bold yellow] Введіть назву файлу (без розширення)", 
+            default="scraped_data"
+        )
+        
+        # Виклик відповідного методу з exporter.py
+        if export_format == "csv":
+            saved_path = Exporter.to_csv(data, f"{base_filename}.csv")
+        else:
+            saved_path = Exporter.to_pretty_report(data, f"{base_filename}.txt")
         
         console.print(f"\n[bold green]🎉 Дані успішно збережено у:[/bold green] {saved_path}")
 
