@@ -1,6 +1,7 @@
 # Universal Web Scraper CLI
-
 A modular, interactive command-line tool written in Python for extracting data from generic HTML structures. Designed to avoid hardcoding selectors by taking target URLs and CSS classes directly via the CLI.
+
+![CLI Demo](assets/demo.png)
 
 ## Features
 * **Interactive CLI**: Built with `rich` for a clean, colorful terminal experience with progress indicators.
